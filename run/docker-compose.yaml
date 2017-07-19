@@ -1,0 +1,32 @@
+version: "2"
+services:
+    https:
+        # XXX Use image: tecnativa/haproxy-letsencrypt instead
+        image: usertoken/haproxy
+        environment:
+            # XXX: Fill this with your real data
+            DOMAINS: usertoken.com,www.usertoken.com,me.usertoken.com,personal.usertoken.com,business.usertoken.com,graphql.usertoken.com
+            EMAIL: admin@usertoken.com
+            # XXX: Use "false" to get real certs!
+            STAGING: "false"
+            # XXX: Use "true" when cert fetching should fail (i.e. in dev env)
+            CONTINUE_ON_CERTONLY_FAILURE: "false"
+        links:
+            - www
+        ports:
+            # It's important to have real ports handled by this container
+            - "80:80"
+            - "443:443"
+        restart: unless-stopped
+        volumes:
+            # This keeps certs and cronstamps across reloads
+            - /netdisk/shared/work/docker/volumes/letsencrypt:/etc/letsencrypt
+            - /netdisk/shared/work/docker/volumes/cronstamps:/var/spool/cron/cronstamps
+
+    # XXX: Put your web app here; for testing, this one is very useful
+    www:
+        image: dockercloud/hello-world:latest
+
+volumes:
+    letsencrypt: 
+    cronstamps: 
