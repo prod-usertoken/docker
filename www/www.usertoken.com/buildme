@@ -1,0 +1,1 @@
+docker build -t usertoken/www.usertoken.com:1.0.0 .

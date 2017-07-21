@@ -1,32 +1,77 @@
-version: "2"
+version: '2'
 services:
-    https:
-        # XXX Use image: tecnativa/haproxy-letsencrypt instead
-        image: usertoken/haproxy
-        environment:
-            # XXX: Fill this with your real data
-            DOMAINS: usertoken.com,www.usertoken.com,me.usertoken.com,personal.usertoken.com,business.usertoken.com,graphql.usertoken.com
-            EMAIL: admin@usertoken.com
-            # XXX: Use "false" to get real certs!
-            STAGING: "false"
-            # XXX: Use "true" when cert fetching should fail (i.e. in dev env)
-            CONTINUE_ON_CERTONLY_FAILURE: "false"
-        links:
-            - www
-        ports:
-            # It's important to have real ports handled by this container
-            - "80:80"
-            - "443:443"
-        restart: unless-stopped
-        volumes:
-            # This keeps certs and cronstamps across reloads
-            - /netdisk/shared/work/docker/volumes/letsencrypt:/etc/letsencrypt
-            - /netdisk/shared/work/docker/volumes/cronstamps:/var/spool/cron/cronstamps
+  https:
+    image: usertoken/haproxy
+    container_name: haproxy
+    environment:
+      DOMAINS: usertoken.com,www.usertoken.com,me.usertoken.com,personal.usertoken.com,business.usertoken.com,graphql.usertoken.com,scuttlebot.usertoken.com
+      EMAIL: admin@usertoken.com
+      STAGING: "true"
+      CONTINUE_ON_CERTONLY_FAILURE: "true"
+    links:
+      - www
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - /netdisk/shared/work/docker/volumes/letsencrypt:/etc/letsencrypt
+      - /netdisk/shared/work/docker/volumes/nginx/log:/var/log
+      - /netdisk/shared/work/docker/volumes/cronstamps:/var/spool/cron/cronstamps
 
-    # XXX: Put your web app here; for testing, this one is very useful
-    www:
-        image: dockercloud/hello-world:latest
+  www:
+    image: jwilder/nginx-proxy
+    container_name: www
+    links:
+      - www-usertoken-com
+      - me-usertoken-com
+      - dev-usertoken-com
+      - personal-usertoken-com
+      - business-usertoken-com
+      - graphql-usertoken-com
+      - scuttlebot-usertoken-com
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /netdisk/shared/work/docker/volumes/nginx/log:/var/log/nginx
 
-volumes:
-    letsencrypt: 
-    cronstamps: 
+  www-usertoken-com:
+    image: usertoken/www.usertoken.com:1.0.0
+    container_name: www-usertoken-com
+    environment:
+      - VIRTUAL_HOST=usertoken.com,www.usertoken.com
+
+  me-usertoken-com:
+    image: usertoken/www.usertoken.com:1.0.0
+    container_name: me-usertoken-com
+    environment:
+      - VIRTUAL_HOST=me.usertoken.com
+
+  dev-usertoken-com:
+    image: usertoken/www.usertoken.com:1.0.0
+    container_name: dev-usertoken-com
+    environment:
+      - VIRTUAL_HOST=dev.usertoken.com
+
+  personal-usertoken-com:
+    image: usertoken/www.usertoken.com:1.0.0
+    container_name: personal-usertoken-com
+    environment:
+      - VIRTUAL_HOST=personal.usertoken.com
+
+  business-usertoken-com:
+    image: usertoken/www.usertoken.com:1.0.0
+    container_name: business-usertoken-com
+    environment:
+      - VIRTUAL_HOST=business.usertoken.com
+
+  graphql-usertoken-com:
+    image: usertoken/www.usertoken.com:1.0.0
+    container_name: graphql-usertoken-com
+    environment:
+      - VIRTUAL_HOST=graphql.usertoken.com
+
+  scuttlebot-usertoken-com:
+    image: usertoken/www.usertoken.com:1.0.0
+    container_name: scuttlebot-usertoken-com
+    environment:
+      - VIRTUAL_HOST=scuttlebot.usertoken.com
