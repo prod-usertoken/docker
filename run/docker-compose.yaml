@@ -4,9 +4,9 @@ services:
     image: usertoken/haproxy
     container_name: haproxy
     environment:
-      DOMAINS: usertoken.com,www.usertoken.com,me.usertoken.com,personal.usertoken.com,business.usertoken.com,graphql.usertoken.com,scuttlebot.usertoken.com
+      DOMAINS: usertoken.com,www.usertoken.com,me.usertoken.com,personal.usertoken.com,business.usertoken.com,graphql.usertoken.com,scuttlebot.usertoken.com,dev.usertoken.com
       EMAIL: admin@usertoken.com
-      STAGING: "true"
+      STAGING: "false"
       CONTINUE_ON_CERTONLY_FAILURE: "true"
     links:
       - www
