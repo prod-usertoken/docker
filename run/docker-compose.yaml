@@ -6,7 +6,7 @@ services:
     environment:
       DOMAINS: usertoken.com,www.usertoken.com,me.usertoken.com,personal.usertoken.com,business.usertoken.com,graphql.usertoken.com,scuttlebot.usertoken.com,dev.usertoken.com
       EMAIL: admin@usertoken.com
-      STAGING: "false"
+      STAGING: "true"
       CONTINUE_ON_CERTONLY_FAILURE: "true"
     links:
       - www

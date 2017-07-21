@@ -1,4 +1,4 @@
 #docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock -t jwilder/nginx-proxy
 #docker run -d -p 9000:9000 -e VIRTUAL_HOST=usertoken.com,www.usertoken.com -t usertoken/www.usertoken.com:1.0.0
-
+[ ! -d ../volumes/letsencrypt ] && mkdir -p ../volumes/letsencrypt
 docker-compose up > ./docker-up.log 2>&1 &
